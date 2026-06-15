@@ -1,0 +1,7 @@
+# Personal / internal — never publish to the public repo or live site
+DM outreach.txt
+*.txt
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
