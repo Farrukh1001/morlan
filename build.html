@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Morlan — Demo Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0C0C0C;--surface:#141414;--surface2:#1B1B1B;
+    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+    --white:#EFEFEF;--muted:rgba(239,239,239,0.45);--accent:#EFEFEF;
+    --head:'Bricolage Grotesque',sans-serif;--body:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--white);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased;padding:32px 18px 80px}
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font-family:var(--head);font-weight:700;font-size:26px;letter-spacing:.01em;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+  label{display:block;font-size:13px;font-weight:500;margin:18px 0 7px;letter-spacing:.01em}
+  .hint{color:var(--muted);font-weight:400}
+  input[type=text],textarea{
+    width:100%;background:var(--surface);border:1px solid var(--border);color:var(--white);
+    border-radius:10px;padding:12px 14px;font-family:var(--body);font-size:14.5px;outline:none;resize:vertical;
+  }
+  input[type=text]:focus,textarea:focus{border-color:var(--border2)}
+  textarea{min-height:230px;line-height:1.5}
+  .rowflex{display:flex;gap:14px;flex-wrap:wrap}
+  .rowflex>div{flex:1;min-width:160px}
+  input[type=color]{width:54px;height:46px;background:none;border:1px solid var(--border);border-radius:10px;cursor:pointer;padding:3px}
+  .colorline{display:flex;align-items:center;gap:12px}
+  .gen{
+    margin-top:28px;width:100%;border:none;cursor:pointer;border-radius:11px;padding:15px;
+    background:var(--white);color:#0C0C0C;font-family:var(--head);font-weight:700;font-size:15px;transition:opacity .15s;
+  }
+  .gen:hover{opacity:.88}
+  .out{margin-top:26px;display:none}
+  .out.show{display:block}
+  .linkbox{
+    background:var(--surface);border:1px solid var(--border2);border-radius:10px;
+    padding:13px 15px;font-size:13px;word-break:break-all;color:var(--white);margin-bottom:12px;
+  }
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:1px solid var(--border2);background:var(--surface2);color:var(--white);border-radius:9px;padding:11px 18px;font-family:var(--head);font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.primary{background:var(--white);color:#0C0C0C;border-color:var(--white)}
+  .btn:hover{opacity:.88}
+  .tag{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:4px 11px;margin-bottom:18px;letter-spacing:.08em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">Morlan · internal</span>
+  <h1>Demo Builder</h1>
+  <p class="sub">Paste a brand's info, hit generate, send the link. Nobody but you sees this page.</p>
+
+  <label>Store name</label>
+  <input type="text" id="store" />
+
+  <div class="rowflex">
+    <div>
+      <label>Bot name</label>
+      <input type="text" id="bot" />
+    </div>
+    <div>
+      <label>Brand colour</label>
+      <div class="colorline">
+        <input type="color" id="accent" value="#2563EB" />
+        <input type="text" id="accentHex" value="#2563EB" style="max-width:120px" />
+      </div>
+    </div>
+  </div>
+
+  <label>Greeting <span class="hint">— first line the bot says</span></label>
+  <input type="text" id="greeting" />
+
+  <label>Store knowledge <span class="hint">— products + prices, shipping, returns, brand voice</span></label>
+  <textarea id="knowledge"></textarea>
+
+  <label>Demo base URL <span class="hint">— where demo.html lives</span></label>
+  <input type="text" id="base" value="https://morlan.dev/demo.html" />
+
+  <button class="gen" id="gen">Generate demo link</button>
+
+  <div class="out" id="out">
+    <label>Shareable link</label>
+    <div class="linkbox" id="link"></div>
+    <div class="actions">
+      <button class="btn primary" id="copy">Copy link</button>
+      <a class="btn" id="open" target="_blank" rel="noopener">Open preview</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- Genetic Supplements prefill ----
+  const GENETIC = {
+    store: "Genetic Supplements",
+    bot: "Atlas",
+    accent: "#2563EB",
+    greeting: "Hey, I'm Atlas — Genetic's product advisor. Training for muscle, recovery, performance, or general health? Tell me your goal and I'll point you to the right stack.",
+    knowledge:
+`BRAND
+Genetic Supplements — ultra-premium UK sports nutrition. "For people who understand the biological cost of their health." Clean, premium ingredients, no dangerous sweeteners (no Aspartame, no Acesulfame-K). Engineered for serious training.
+
+PROTEIN
+Bio Whey Protein Powder — from £34.99
+Ultra-premium whey from grass-fed Swiss cows. ~35g protein per serving, 50+ servings on the 2kg. Micro-filtered, mixes instantly. No Aspartame or Ace-K; under 0.1% sucralose. The core protein for muscle growth and recovery.
+
+Pro Isolate Zero — £49.99 (1.5kg)
+Whey protein isolate, very low carb and fat. Unflavoured option available. For lean muscle with minimal extras.
+
+PeptoPro — £59.99 (500g)
+Premium hydrolysed protein peptides for fast recovery. Elite tier.
+
+Optima Advanced — £74.99 (2kg)
+Advanced premium protein blend.
+
+Workout Food — £79.99 (2kg)
+All-in-one workout nutrition.
+
+Vegan Protein — £39.99 (1.5kg)
+100% plant-powered, pea-based. For vegan and vegetarian diets.
+
+Bio Casein — £17.50 (1.14kg, discontinued, half price while stocks last)
+Slow-release protein, ideal before bed.
+
+Shaker Bottle — £4.99
+
+WIDER RANGE (point customers to the right category)
+Fish Oils (Omega-3), Pro-Bio-15 probiotic (digestion and immunity), greens powders, vitamins and minerals, pre / intra / post-workout, amino acids and BCAAs, weight-loss support.
+
+SHIPPING
+Free UK delivery by DPD tracked courier, 1–3 working days. Same-day dispatch on orders placed before 10:00am on a working day; after 10:00am ships the next working day; orders after 10:00am Friday ship Monday. Delivery needs a signature (can be left with a neighbour or in a safe place). Shipping questions: sales@geneticsupplements.co.uk.
+
+RETURNS
+For returns or refunds, point the customer to the Refund Policy page or sales@geneticsupplements.co.uk. Do not invent a returns window.
+
+CONTACT
+Phone 0330 133 8722. Email sales@geneticsupps.co.uk.`
+  };
+
+  const $ = id => document.getElementById(id);
+
+  function load(cfg){
+    $('store').value = cfg.store; $('bot').value = cfg.bot;
+    $('accent').value = cfg.accent; $('accentHex').value = cfg.accent;
+    $('greeting').value = cfg.greeting; $('knowledge').value = cfg.knowledge;
+  }
+  load(GENETIC);
+
+  $('accent').addEventListener('input', e => $('accentHex').value = e.target.value);
+  $('accentHex').addEventListener('input', e => { if(/^#[0-9a-fA-F]{6}$/.test(e.target.value)) $('accent').value = e.target.value; });
+
+  function encodeConfig(obj){
+    const json = JSON.stringify(obj);
+    const bytes = new TextEncoder().encode(json);
+    let bin=''; bytes.forEach(b => bin += String.fromCharCode(b));
+    return btoa(bin);
+  }
+
+  $('gen').addEventListener('click', () => {
+    const cfg = {
+      store: $('store').value.trim(),
+      bot: $('bot').value.trim(),
+      accent: $('accentHex').value.trim() || '#2563EB',
+      greeting: $('greeting').value.trim(),
+      knowledge: $('knowledge').value.trim()
+    };
+    const base = ($('base').value.trim() || 'https://morlan.dev/demo.html').replace(/#.*$/,'');
+    const url = base + '#' + encodeConfig(cfg);
+    $('link').textContent = url;
+    $('open').href = url;
+    $('out').classList.add('show');
+    $('out').scrollIntoView({behavior:'smooth'});
+  });
+
+  $('copy').addEventListener('click', async () => {
+    try{ await navigator.clipboard.writeText($('link').textContent); $('copy').textContent='Copied ✓'; setTimeout(()=>$('copy').textContent='Copy link',1500);}catch(e){}
+  });
+</script>
+</body>
+</html>
