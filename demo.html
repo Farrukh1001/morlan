@@ -6,97 +6,138 @@
 <title>Live demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{
-    --bg:#0C0C0C; --surface:#141414; --surface2:#1B1B1B;
-    --border:rgba(255,255,255,0.09); --border2:rgba(255,255,255,0.16);
-    --white:#EFEFEF; --muted:rgba(239,239,239,0.45);
-    --accent:#2563EB; --accent-ink:#ffffff;
+    --bg:#0B0B0C; --surface:#141417; --surface2:#1A1A1E; --raise:#202026;
+    --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.15);
+    --white:#F0F0F2; --muted:rgba(240,240,242,0.42);
+    --accent:#2563EB; --accent-ink:#fff;
+    --accent-glow:rgba(37,99,235,0.40); --accent-soft:rgba(37,99,235,0.13); --accent-faint:rgba(37,99,235,0.22);
     --head:'Bricolage Grotesque',sans-serif; --body:'DM Sans',sans-serif;
   }
   html,body{height:100%}
   body{
-    background:var(--bg); color:var(--white); font-family:var(--body);
-    line-height:1.5; -webkit-font-smoothing:antialiased;
-    display:flex; align-items:center; justify-content:center;
-    padding:0; min-height:100dvh;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(255,255,255,.02), transparent 60%),
+      var(--bg);
+    color:var(--white); font-family:var(--body); line-height:1.5;
+    -webkit-font-smoothing:antialiased; display:flex; align-items:center; justify-content:center;
+    min-height:100dvh;
   }
+
   .shell{
-    width:100%; max-width:440px; height:100dvh; max-height:760px;
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:16px; display:flex; flex-direction:column; overflow:hidden;
-    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    position:relative; width:100%; max-width:430px; height:100dvh; max-height:740px;
+    background:var(--surface); border:1px solid var(--border); border-radius:20px;
+    display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset;
   }
   @media (max-width:480px){ .shell{height:100dvh;max-height:none;border-radius:0;border-left:none;border-right:none} }
 
+  /* ambient brand glow at top */
+  .shell::before{
+    content:""; position:absolute; top:-40%; left:50%; transform:translateX(-50%);
+    width:140%; height:60%; pointer-events:none; z-index:0;
+    background:radial-gradient(50% 60% at 50% 50%, var(--accent-soft), transparent 70%);
+  }
+
   /* header */
   .head{
-    display:flex; align-items:center; gap:12px;
-    padding:16px 18px; border-bottom:1px solid var(--border);
-    background:var(--surface2);
+    position:relative; z-index:2; display:flex; align-items:center; gap:13px;
+    padding:17px 18px; border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg, rgba(255,255,255,.025), transparent);
   }
   .avatar{
-    width:40px;height:40px;border-radius:50%;flex:0 0 auto;
-    background:var(--accent); color:var(--accent-ink);
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--head); font-weight:700; font-size:18px;
+    width:42px;height:42px;border-radius:14px;flex:0 0 auto; position:relative;
+    background:linear-gradient(150deg, rgba(255,255,255,.32), rgba(255,255,255,0) 55%), var(--accent);
+    color:var(--accent-ink); display:flex;align-items:center;justify-content:center;
+    font-family:var(--head); font-weight:700; font-size:19px;
+    box-shadow:0 6px 18px var(--accent-glow), 0 0 0 1px rgba(255,255,255,.10) inset;
   }
   .head-meta{flex:1;min-width:0}
-  .head-name{font-family:var(--head);font-weight:700;font-size:16px;letter-spacing:.01em}
-  .head-store{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
-  .dot{width:7px;height:7px;border-radius:50%;background:#3ECf8E;box-shadow:0 0 0 3px rgba(62,207,142,.18)}
+  .head-name{font-family:var(--head);font-weight:700;font-size:16px;letter-spacing:.01em;line-height:1.2}
+  .head-store{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .status{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:500}
+  .pulse{width:7px;height:7px;border-radius:50%;background:#35D08A;box-shadow:0 0 0 0 rgba(53,208,138,.5);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(53,208,138,.45)}70%{box-shadow:0 0 0 6px rgba(53,208,138,0)}100%{box-shadow:0 0 0 0 rgba(53,208,138,0)}}
 
-  /* messages */
-  .feed{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:12px}
-  .row{display:flex;max-width:84%}
+  /* feed */
+  .feed{
+    position:relative; z-index:1; flex:1; overflow-y:auto; padding:22px 16px 8px;
+    display:flex; flex-direction:column; gap:13px;
+    background-image:radial-gradient(circle, rgba(255,255,255,.022) 1px, transparent 1px);
+    background-size:26px 26px;
+  }
+  .feed::-webkit-scrollbar{width:8px}
+  .feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:8px}
+
+  .row{display:flex;max-width:85%;animation:rise .34s cubic-bezier(.2,.7,.2,1)}
   .row.bot{align-self:flex-start}
   .row.user{align-self:flex-end}
-  .bubble{
-    padding:11px 14px;border-radius:14px;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word;
-  }
-  .row.bot .bubble{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:5px;color:var(--white)}
-  .row.user .bubble{background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:5px}
+  @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 
-  .typing{display:flex;gap:4px;padding:13px 15px}
-  .typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:b 1.2s infinite}
+  .bubble{padding:11px 15px;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word;line-height:1.5}
+  .row.bot .bubble{
+    background:var(--surface2); border:1px solid var(--border); color:var(--white);
+    border-radius:16px 16px 16px 5px;
+  }
+  .row.user .bubble{
+    background:var(--accent); color:var(--accent-ink);
+    border-radius:16px 16px 5px 16px; box-shadow:0 5px 16px var(--accent-glow);
+  }
+
+  .typing{display:flex;gap:5px;padding:14px 16px}
+  .typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
   .typing span:nth-child(2){animation-delay:.18s}.typing span:nth-child(3){animation-delay:.36s}
-  @keyframes b{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+  /* starter chips */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px 6px;align-self:flex-start;max-width:100%}
+  .chip{
+    border:1px solid var(--border2); background:rgba(255,255,255,.02); color:var(--white);
+    border-radius:999px; padding:9px 15px; font-size:13px; cursor:pointer;
+    font-family:var(--body); transition:border-color .18s, background .18s, transform .12s;
+    animation:rise .4s cubic-bezier(.2,.7,.2,1) backwards;
+  }
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .chip:active{transform:scale(.97)}
 
   /* cap banner */
   .cap{
-    margin:4px 2px 0; padding:13px 15px; border-radius:12px;
-    background:rgba(37,99,235,.10); border:1px solid var(--border2);
-    font-size:13.5px; color:var(--white); display:none; text-align:center; line-height:1.5;
+    margin:2px 2px 0;padding:14px 16px;border-radius:14px;
+    background:var(--accent-soft);border:1px solid var(--accent-faint);
+    font-size:13.5px;color:var(--white);display:none;text-align:center;line-height:1.5;
   }
-  .cap.show{display:block}
+  .cap.show{display:block;animation:rise .34s cubic-bezier(.2,.7,.2,1)}
 
-  /* input */
-  .compose{
-    display:flex;gap:9px;padding:12px 14px;border-top:1px solid var(--border);
-    background:var(--surface2);
-  }
+  /* compose */
+  .compose{position:relative;z-index:2;display:flex;gap:9px;padding:13px 14px;border-top:1px solid var(--border);background:linear-gradient(0deg, rgba(255,255,255,.02), transparent)}
   .compose input{
     flex:1;background:var(--bg);border:1px solid var(--border);color:var(--white);
-    border-radius:11px;padding:12px 14px;font-family:var(--body);font-size:14.5px;outline:none;
+    border-radius:13px;padding:13px 15px;font-family:var(--body);font-size:14.5px;outline:none;
+    transition:border-color .18s, box-shadow .18s;
   }
-  .compose input:focus{border-color:var(--border2)}
+  .compose input::placeholder{color:var(--muted)}
+  .compose input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-faint)}
   .compose input:disabled{opacity:.5}
   .send{
-    flex:0 0 auto;border:none;cursor:pointer;border-radius:11px;padding:0 18px;
+    flex:0 0 auto;border:none;cursor:pointer;border-radius:13px;padding:0 20px;
     background:var(--accent);color:var(--accent-ink);font-family:var(--head);font-weight:700;font-size:14px;
-    transition:opacity .15s;
+    box-shadow:0 5px 16px var(--accent-glow);transition:filter .15s, transform .12s;
   }
-  .send:hover{opacity:.88}
-  .send:disabled{opacity:.4;cursor:default}
+  .send:hover{filter:brightness(1.08)}
+  .send:active{transform:scale(.97)}
+  .send:disabled{opacity:.4;cursor:default;box-shadow:none}
 
-  .by{
-    text-align:center;font-size:11px;color:var(--muted);padding:9px;border-top:1px solid var(--border);background:var(--surface2);
-  }
+  .by{text-align:center;font-size:11px;color:var(--muted);padding:9px;border-top:1px solid var(--border);background:var(--surface2);position:relative;z-index:2}
   .by a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border2)}
   .by a:hover{color:var(--white)}
+
+  @media (prefers-reduced-motion:reduce){
+    .row,.chip,.cap{animation:none}
+    .pulse{animation:none}
+  }
 </style>
 </head>
 <body>
@@ -107,12 +148,12 @@
         <div class="head-name" id="botName">Assistant</div>
         <div class="head-store" id="storeName">Store</div>
       </div>
-      <div class="status"><span class="dot"></span> Online</div>
+      <div class="status"><span class="pulse"></span> Online</div>
     </div>
 
     <div class="feed" id="feed"></div>
 
-    <div style="padding:0 16px 8px">
+    <div style="padding:0 16px 8px;position:relative;z-index:2">
       <div class="cap" id="cap"></div>
     </div>
 
@@ -125,44 +166,30 @@
   </div>
 
 <script>
-  // ---------- decode brand config from URL hash ----------
-  function decodeConfig(b64){
-    const bin = atob(b64);
-    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes));
-  }
-
-  const MSG_CAP = 15;
-  let userCount = 0;
-  let busy = false;
-  const history = [];           // API messages only (starts with a user turn)
-
-  let cfg = null;
-  try { cfg = decodeConfig(location.hash.slice(1)); } catch(e){ cfg = null; }
-
-  if(!cfg){
-    document.getElementById('feed').innerHTML =
-      '<div class="row bot"><div class="bubble">This demo link is missing its setup. Generate a fresh one from the builder.</div></div>';
-    document.getElementById('input').disabled = true;
-    document.getElementById('send').disabled = true;
-  } else {
-    const accent = cfg.accent || '#2563EB';
-    document.documentElement.style.setProperty('--accent', accent);
-    document.getElementById('botName').textContent = cfg.bot || 'Assistant';
-    document.getElementById('storeName').textContent = cfg.store || '';
-    document.getElementById('avatar').textContent = (cfg.bot || 'A').trim().charAt(0).toUpperCase();
-    document.title = (cfg.bot || 'Demo') + ' — ' + (cfg.store || 'Live demo');
-
-    const greeting = cfg.greeting ||
-      ("Hi, I'm " + (cfg.bot||'your assistant') + ". What are you shopping for today?");
-    addBubble('bot', greeting);
-  }
-
+  // ---------- elements (grabbed first, so nothing runs before they exist) ----------
   const feed = document.getElementById('feed');
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send');
   const cap = document.getElementById('cap');
 
+  const MSG_CAP = 15;
+  let userCount = 0;
+  let busy = false;
+  const history = [];   // API messages only — must start with a user turn
+  let cfg = null;
+
+  // ---------- helpers ----------
+  function decodeConfig(b64){
+    const bin = atob(b64);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  function hexToParts(hex){
+    const m = /^#?([0-9a-f]{6})$/i.exec((hex||'').trim());
+    if(!m) return [37,99,235];
+    const n = parseInt(m[1],16);
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
   function addBubble(who, text){
     const row = document.createElement('div');
     row.className = 'row ' + who;
@@ -172,25 +199,38 @@
     row.appendChild(b);
     feed.appendChild(row);
     feed.scrollTop = feed.scrollHeight;
-    return row;
   }
-
   function showTyping(){
     const row = document.createElement('div');
-    row.className = 'row bot';
-    row.id = 'typing';
+    row.className = 'row bot'; row.id = 'typing';
     row.innerHTML = '<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
     feed.appendChild(row);
     feed.scrollTop = feed.scrollHeight;
   }
   function hideTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
+  function removeChips(){ const c=document.getElementById('chips'); if(c) c.remove(); }
+
+  function renderChips(items){
+    if(!items || !items.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'chips'; wrap.id = 'chips';
+    items.slice(0,3).forEach((q,i) => {
+      const chip = document.createElement('button');
+      chip.className = 'chip'; chip.textContent = q;
+      chip.style.animationDelay = (0.08*i + 0.15) + 's';
+      chip.addEventListener('click', () => { input.value = q; send(); });
+      wrap.appendChild(chip);
+    });
+    feed.appendChild(wrap);
+    feed.scrollTop = feed.scrollHeight;
+  }
 
   function lockForCap(){
     input.disabled = true; sendBtn.disabled = true;
     input.placeholder = 'Demo limit reached';
     cap.classList.add('show');
-    cap.innerHTML = "That's the end of the demo — but the real thing never stops. Want this live on " +
-      (cfg.store || 'your store') + "? Reply to my DM and I'll set it up.";
+    cap.innerHTML = "That's the demo — but the real thing never clocks off. Want this live on " +
+      (cfg && cfg.store ? cfg.store : 'your store') + "? Reply to my DM and I'll set it up.";
   }
 
   async function send(){
@@ -198,6 +238,7 @@
     const text = input.value.trim();
     if(!text) return;
 
+    removeChips();
     addBubble('user', text);
     history.push({ role:'user', content:text });
     input.value = '';
@@ -209,13 +250,11 @@
       const r = await fetch('/api/chat', {
         method:'POST',
         headers:{'content-type':'application/json'},
-        body: JSON.stringify({ messages: history, brand: {
-          store: cfg.store, bot: cfg.bot, knowledge: cfg.knowledge
-        }})
+        body: JSON.stringify({ messages: history, brand:{ store:cfg.store, bot:cfg.bot, knowledge:cfg.knowledge }})
       });
       const data = await r.json();
       hideTyping();
-      const reply = data.reply || "Sorry — something glitched. Try again?";
+      const reply = data.reply || "Sorry — something glitched. Try that again?";
       addBubble('bot', reply);
       history.push({ role:'assistant', content: reply });
     }catch(e){
@@ -228,9 +267,34 @@
     else { sendBtn.disabled = false; input.focus(); }
   }
 
+  // ---------- listeners (always attached) ----------
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', e => { if(e.key === 'Enter') send(); });
-  input.focus();
+
+  // ---------- decode config + paint (after everything above is ready) ----------
+  try { cfg = decodeConfig(location.hash.slice(1)); } catch(e){ cfg = null; }
+
+  if(!cfg){
+    addBubble('bot', "This demo link is missing its setup — generate a fresh one from the builder.");
+    input.disabled = true; sendBtn.disabled = true;
+  } else {
+    const accent = cfg.accent || '#2563EB';
+    const [r,g,b] = hexToParts(accent);
+    const root = document.documentElement.style;
+    root.setProperty('--accent', accent);
+    root.setProperty('--accent-glow', `rgba(${r},${g},${b},0.40)`);
+    root.setProperty('--accent-soft', `rgba(${r},${g},${b},0.13)`);
+    root.setProperty('--accent-faint', `rgba(${r},${g},${b},0.22)`);
+
+    document.getElementById('botName').textContent = cfg.bot || 'Assistant';
+    document.getElementById('storeName').textContent = cfg.store || '';
+    document.getElementById('avatar').textContent = (cfg.bot || 'A').trim().charAt(0).toUpperCase();
+    document.title = (cfg.bot || 'Demo') + ' — ' + (cfg.store || 'Live demo');
+
+    addBubble('bot', cfg.greeting || ("Hi, I'm " + (cfg.bot||'your assistant') + ". What are you shopping for today?"));
+    renderChips(cfg.suggestions);
+    input.focus();
+  }
 </script>
 </body>
 </html>
