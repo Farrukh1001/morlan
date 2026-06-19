@@ -75,6 +75,9 @@
   <label>Greeting <span class="hint">— first line the bot says</span></label>
   <input type="text" id="greeting" />
 
+  <label>Starter questions <span class="hint">— tappable chips, one per line, max 3</span></label>
+  <textarea id="suggestions" style="min-height:96px"></textarea>
+
   <label>Store knowledge <span class="hint">— products + prices, shipping, returns, brand voice</span></label>
   <textarea id="knowledge"></textarea>
 
@@ -100,6 +103,7 @@
     bot: "Atlas",
     accent: "#2563EB",
     greeting: "Hey, I'm Atlas — Genetic's product advisor. Training for muscle, recovery, performance, or general health? Tell me your goal and I'll point you to the right stack.",
+    suggestions: ["Best for building muscle?", "Is the whey sucralose-free?", "How fast is delivery?"],
     knowledge:
 `BRAND
 Genetic Supplements — ultra-premium UK sports nutrition. "For people who understand the biological cost of their health." Clean, premium ingredients, no dangerous sweeteners (no Aspartame, no Acesulfame-K). Engineered for serious training.
@@ -147,6 +151,7 @@ Phone 0330 133 8722. Email sales@geneticsupps.co.uk.`
     $('store').value = cfg.store; $('bot').value = cfg.bot;
     $('accent').value = cfg.accent; $('accentHex').value = cfg.accent;
     $('greeting').value = cfg.greeting; $('knowledge').value = cfg.knowledge;
+    $('suggestions').value = (cfg.suggestions || []).join('\n');
   }
   load(GENETIC);
 
@@ -166,6 +171,7 @@ Phone 0330 133 8722. Email sales@geneticsupps.co.uk.`
       bot: $('bot').value.trim(),
       accent: $('accentHex').value.trim() || '#2563EB',
       greeting: $('greeting').value.trim(),
+      suggestions: $('suggestions').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0,3),
       knowledge: $('knowledge').value.trim()
     };
     const base = ($('base').value.trim() || 'https://morlan.dev/demo.html').replace(/#.*$/,'');
