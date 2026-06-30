@@ -103,6 +103,10 @@
   .chip:hover{border-color:var(--accent);background:var(--accent-soft)}
   .chip:active{transform:scale(.97)}
 
+  /* persistent FAQ bar — sits just above the input */
+  .faqbar{display:flex;flex-wrap:wrap;gap:8px;padding:11px 14px 3px;position:relative;z-index:2}
+  .faqbar:empty{display:none}
+
   /* cap banner */
   .cap{
     margin:2px 2px 0;padding:14px 16px;border-radius:14px;
@@ -157,6 +161,8 @@
       <div class="cap" id="cap"></div>
     </div>
 
+    <div class="faqbar" id="faqbar"></div>
+
     <div class="compose">
       <input id="input" type="text" placeholder="Ask a question…" autocomplete="off" />
       <button class="send" id="send">Send</button>
@@ -171,6 +177,7 @@
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send');
   const cap = document.getElementById('cap');
+  const faqbar = document.getElementById('faqbar');
 
   const MSG_CAP = 15;
   let userCount = 0;
@@ -211,23 +218,21 @@
   function removeChips(){ const c=document.getElementById('chips'); if(c) c.remove(); }
 
   function renderChips(items){
-    if(!items || !items.length) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'chips'; wrap.id = 'chips';
+    if(!items || !items.length || !faqbar) return;
+    faqbar.innerHTML = '';
     items.slice(0,3).forEach((q,i) => {
       const chip = document.createElement('button');
       chip.className = 'chip'; chip.textContent = q;
       chip.style.animationDelay = (0.08*i + 0.15) + 's';
-      chip.addEventListener('click', () => { input.value = q; send(); });
-      wrap.appendChild(chip);
+      chip.addEventListener('click', () => { if(busy) return; input.value = q; send(); });
+      faqbar.appendChild(chip);
     });
-    feed.appendChild(wrap);
-    feed.scrollTop = feed.scrollHeight;
   }
 
   function lockForCap(){
     input.disabled = true; sendBtn.disabled = true;
     input.placeholder = 'Demo limit reached';
+    if(faqbar) faqbar.style.display = 'none';
     cap.classList.add('show');
     cap.innerHTML = "That's the demo — but the real thing never clocks off. Want this live on " +
       (cfg && cfg.store ? cfg.store : 'your store') + "? Reply to my DM and I'll set it up.";
@@ -238,7 +243,6 @@
     const text = input.value.trim();
     if(!text) return;
 
-    removeChips();
     addBubble('user', text);
     history.push({ role:'user', content:text });
     input.value = '';
